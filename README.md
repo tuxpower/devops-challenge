@@ -1,4 +1,4 @@
-# code-with-quarkus Project
+# Devops-Challenge Project
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
@@ -8,49 +8,87 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 
 You can run your application in dev mode that enables live coding using:
 ```shell script
-./mvnw compile quarkus:dev
+mvn compile quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/dev/.
 
-## Packaging and running the application
+## Preflight checklist
 
-The application can be packaged using:
+Checking known OWASP vulnerabilities using:
 ```shell script
-./mvnw package
+mvn verify -Dcheckstyle.skip -DskipUTs -DskipPTs -DskipFTs
 ```
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
+Verifying dependencies updates using:
 ```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
+mvn versions:display-dependency-updates
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using: 
+Checking plugin updates using:
 ```shell script
-./mvnw package -Pnative
+mvn versions:display-plugin-updates
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
+Verifying checkstyle using:
 ```shell script
-./mvnw package -Pnative -Dquarkus.native.container-build=true
+mvn validate
 ```
 
-You can then execute your native executable with: `./target/code-with-quarkus-1.0.0-SNAPSHOT-runner`
+### Unit tests
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.html.
+Run Unit tests using:
+```shell script
+mvn test -DskipDCs -Dcheckstyle.skip -DskipFTs -DskipPTs
+```
 
-## Provided Code
+### Functional and Integrations tests
 
-### RESTEasy JAX-RS
+Run Functional and Integrations using:
+```shell script
+mvn verify  -DskipDCs -Dcheckstyle.skip -DskipUTs -DskipPTs
+```
 
-Easily start your RESTful Web Services
+## Building a Docker image
 
-[Related guide section...](https://quarkus.io/guides/getting-started#the-jax-rs-resources)
+You can build a Docker image using: 
+```shell script
+mvn clean package -Dquarkus.container-image.build=true
+```
+It builds a Docker image and tag as `541104015824.devops.ecr.eu-central-1.amazonaws.com/devops-test:1.0.0-SNAPSHOT`.
+
+## Running the application
+
+### Prerequisites
+
+This application requires a PostgreSQL database server.
+Do you need a ready-to-use PostgreSQL server to try out the API?
+```shell sript
+docker run -d --restart always --name postgres \
+-e POSTGRES_DB=devops_test \
+-e POSTGRES_USER=devops \
+-e POSTGRES_PASSWORD=password \
+--network host postgres:10.6
+```
+
+You can then run the application using:
+```shell script
+docker run -d --rm --network host 541104015824.devops.ecr.eu-central-1.amazonaws.com/devops-test:1.0.0-SNAPSHOT
+```
+
+## Access the API
+
+You can test the API via a user-friendly user interface named Swagger UI.
+Swagger UI is a great tool permitting to visualize and interact with the API. The UI is automatically generated from the application OpenAPI specification.
+Once the application is started, you can go to http://localhost:8080/swagger-ui and play with the API.
+
+## Deploy the API in Kubernetes
+
+By adding these dependencies, we enable the generation of Kubernetes manifests each time we perform a build while also enabling the build of a container image using Jib. For example, following the execution of ./mvnw package, you will notice amongst the other files that are created, two files named _kubernetes.json_ and _kubernetes.yml_ in the target/kubernetes/ directory.
+
+The generated manifest can be applied to the cluster from the project root using kubectl:
+```shell script
+kubectl apply -f target/kubernetes/kubernetes.yml
+```
+
+This assumes that a _.kube/config_ is available in your user directory that points to the target Kubernetes cluster. In other words the extension will use whatever cluster kubectl uses.
