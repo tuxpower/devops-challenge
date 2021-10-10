@@ -24,7 +24,7 @@ import javax.ws.rs.core.MediaType;
  * This class makes sure that the application is loaded by Quarkus.
  *
  */
-@ApplicationPath("/")
+@ApplicationPath("/hello")
 @OpenAPIDefinition(
         info = @Info(version = "V0.1", title = "DevOps Engineer Test"),
         servers = {

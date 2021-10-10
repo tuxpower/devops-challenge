@@ -21,7 +21,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 @ApplicationScoped
-@Path("/hello")
+@Path("/")
 public class UserApi {
     
     @Inject
