@@ -18,20 +18,7 @@ public class DomainAssembler {
      * @return {@link UserEntity}
      */
     public UserEntity assembleUser(@NotNull final String username, @NotNull final User origin) {
-        return assembleUser(origin, new UserEntity(), username);
-    }
-    
-    /**
-     * Assembles domain entity user to destiny database entity.
-     * 
-     * @param origin the domain entity user
-     * @param destiny the destiny database user entity
-     * @param username the username of the user
-     * 
-     * @return {@link UserEntity}
-     */
-    public UserEntity assembleUser(@NotNull final User origin, @NotNull final UserEntity destiny, 
-            @NotNull final String username) {
+        UserEntity destiny = new UserEntity();
         destiny.setUsername(username);
         destiny.setDateOfBirth(origin.getDateOfBirth());
         return destiny;
