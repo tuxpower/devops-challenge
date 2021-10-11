@@ -1,6 +1,7 @@
 package org.acme.domain.entity;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
@@ -133,6 +134,25 @@ public class User {
         public User build() {
             return new User(this);
         }
+    }
+    
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || !getClass().equals(other.getClass())) {
+            return false;
+        }
+
+        User castOther = (User) other;
+
+        return Objects.equals(username, castOther.username) && Objects.equals(dateOfBirth, castOther.dateOfBirth);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, dateOfBirth);
     }
 
 }

@@ -1,6 +1,8 @@
 package org.acme.api.database.entity;
 
 import java.time.LocalDate;
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -57,6 +59,25 @@ public class UserEntity extends PanacheEntityBase {
      */
     public void setDateOfBirth(final LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+    
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || !getClass().equals(other.getClass())) {
+            return false;
+        }
+
+        UserEntity castOther = (UserEntity) other;
+
+        return Objects.equals(username, castOther.username) && Objects.equals(dateOfBirth, castOther.dateOfBirth);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, dateOfBirth);
     }
 
 }
