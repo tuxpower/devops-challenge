@@ -62,7 +62,7 @@ import javax.ws.rs.core.MediaType;
                                 summary = "User response body",
                                 description = "User response body example",
                                 value =     "{\n" 
-                                        +   "    \"" + User.DATE_OF_BIRTH + "\": \"1978-09-02\"\n"
+                                        +   "    \"message\": \"Hello, johndoe! Happy Birthday!\"\n"
                                         +   "}"
                         )
                 },
