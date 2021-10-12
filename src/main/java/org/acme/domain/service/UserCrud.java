@@ -78,25 +78,30 @@ public class UserCrud {
         if (dateOfBirth.getMonthValue() == todayMonth && dateOfBirth.getDayOfMonth() == todayDayOfMounth) {
             message.append("{\"message\": \"Hello, " + user.getUsername() + "! Happy Birthday!\"}");
         } else {
-            message.append("{\"message\": \"Hello, " + user.getUsername() + "! Your birthday is in " 
-                    + checkDays(dateOfBirth, today) + " day(s)\"}");
+            message.append("{\"message\": \"Hello, " + user.getUsername() + "! Your birthday is in "  
+                    + nDays(dateOfBirth, today) + " day(s)\"}");
         }
+        
         return message.toString();
     }
     
-    private long checkDays(final LocalDate dateOfBirth, final LocalDate today) {
-        LocalDate to;
+    private long nDays(final LocalDate dateOfBirth, final LocalDate today) {
+        LocalDate nextBirthday;
         
         /**
-         * Check N days if birthday is still this year, else next year
+         * Check if birthday is still this year, else next year.
+         * 
          */
-        if (dateOfBirth.getMonthValue() >= today.getMonthValue()) {
-            to = LocalDate.of(today.getYear(), dateOfBirth.getMonthValue(), dateOfBirth.getDayOfMonth());
+        if (today.getMonthValue() < dateOfBirth.getMonthValue()
+                || (today.getMonthValue() == dateOfBirth.getMonthValue() 
+                && today.getDayOfMonth() < dateOfBirth.getDayOfMonth())) {
+            nextBirthday = LocalDate.of(today.getYear(), dateOfBirth.getMonthValue(), dateOfBirth.getDayOfMonth());
+            
         } else {
-            to = LocalDate.of(today.plusYears(1).getYear(), dateOfBirth.getMonthValue(), dateOfBirth.getDayOfMonth());
+            nextBirthday = LocalDate.of(today.plusYears(1).getYear(), dateOfBirth.getMonthValue(), dateOfBirth.getDayOfMonth());
         }
         
-        return ChronoUnit.DAYS.between(today, to);
+        return ChronoUnit.DAYS.between(today, nextBirthday);
     }
 
 }
