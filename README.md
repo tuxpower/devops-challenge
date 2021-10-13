@@ -55,7 +55,7 @@ You can build a Docker image using:
 ```shell script
 mvn clean package -Dquarkus.container-image.build=true
 ```
-It builds a Docker image and tag as `541104015824.devops.ecr.eu-central-1.amazonaws.com/devops-test:1.0.0-SNAPSHOT`.
+It builds a Docker image and tag as `jgaspar/devops-test:1.0.0
 
 ## Running the application
 
@@ -73,7 +73,7 @@ docker run -d --restart always --name postgres \
 
 You can then run the application using:
 ```shell script
-docker run -d --rm --network host 541104015824.devops.ecr.eu-central-1.amazonaws.com/devops-test:1.0.0-SNAPSHOT
+docker run -d --rm --network host jgaspar/devops-test:1.0.0
 ```
 
 ## Access the API
