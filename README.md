@@ -1,8 +1,6 @@
-# Devops-Challenge Project
+# Jib
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
-
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+This branch enables [Jib](https://github.com/GoogleContainerTools/jib) for container image builds.
 
 ## Running the application in dev mode
 
