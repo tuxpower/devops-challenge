@@ -44,6 +44,3 @@ jobs:
       - run:
           name: Unit tests
           command: mvn test -DskipDCs -Dcheckstyle.skip -DskipFTs -DskipPTs
-      - run:
-          name: Functional Tests
-          command: mvn verify  -DskipDCs -Dcheckstyle.skip -DskipUTs -DskipPTs
