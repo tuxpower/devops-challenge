@@ -87,21 +87,27 @@ public class UserCrud {
     
     private long nDays(final LocalDate dateOfBirth, final LocalDate today) {
         LocalDate nextBirthday;
+        int birthdayYear; 
         
         /**
          * Check if birthday is still this year, else next year.
          * 
          */
-        if (today.getMonthValue() < dateOfBirth.getMonthValue()
-                || (today.getMonthValue() == dateOfBirth.getMonthValue() 
-                && today.getDayOfMonth() < dateOfBirth.getDayOfMonth())) {
-            nextBirthday = LocalDate.of(today.getYear(), dateOfBirth.getMonthValue(), dateOfBirth.getDayOfMonth());
-            
-        } else {
-            nextBirthday = LocalDate.of(today.plusYears(1).getYear(), dateOfBirth.getMonthValue(), dateOfBirth.getDayOfMonth());
-        }
+        birthdayYear = (birthDayAlreadyHappenedThisYear(dateOfBirth)) ? today.getYear(): today.plusYears(1).getYear();
+        
+        /**
+         * Set the next birthday
+         */
+        nextBirthday = LocalDate.of(birthdayYear, dateOfBirth.getMonthValue(), dateOfBirth.getDayOfMonth());
         
         return ChronoUnit.DAYS.between(today, nextBirthday);
+    }
+    
+    private boolean birthDayAlreadyHappenedThisYear(final LocalDate dateOfBirth) {
+        LocalDate today = LocalDate.now();
+        return today.getMonthValue() < dateOfBirth.getMonthValue()
+                || (today.getMonthValue() == dateOfBirth.getMonthValue() 
+                && today.getDayOfMonth() < dateOfBirth.getDayOfMonth());
     }
 
 }
