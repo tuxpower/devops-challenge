@@ -76,6 +76,6 @@ public class UserApi {
         @Pattern(regexp = "^[A-Za-z]*$", message="Username must contain only letters")
         final String username) {
     
-    return Response.ok(userCrud.read(username)).build();
+    return Response.ok(userCrud.read(username).toString()).build();
     }
 }
