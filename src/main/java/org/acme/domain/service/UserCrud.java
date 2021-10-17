@@ -75,15 +75,14 @@ public class UserCrud {
         
         return new JSONObject()
                 .put("message", isBirtyhdayToday(user.getDateOfBirth()) ? hello + " Happy Birthday!" 
-                        : hello + " Your birthday is in " + nDays(dateOfBirth, LocalDate.now()) + " day(s)");
+                        : hello + " Your birthday is in " + nDays(dateOfBirth) + " day(s)");
     }
     
     private boolean isBirtyhdayToday(final LocalDate dateOfBirth) {
-        
         return dateOfBirth.getMonthValue() == todayMonth && dateOfBirth.getDayOfMonth() == todayDayOfMounth;
     }
     
-    private long nDays(final LocalDate dateOfBirth, final LocalDate today) {
+    private long nDays(final LocalDate dateOfBirth) {
         LocalDate nextBirthday;
         int birthdayYear; 
         
@@ -91,14 +90,15 @@ public class UserCrud {
          * Check if birthday is still this year, else next year.
          * 
          */
-        birthdayYear = (birthDayAlreadyHappenedThisYear(dateOfBirth)) ? today.plusYears(1).getYear() : today.getYear();
+        birthdayYear = (birthDayAlreadyHappenedThisYear(dateOfBirth)) ? LocalDate.now().plusYears(1).getYear()
+                : LocalDate.now().getYear();
         
         /**
          * Set the next birthday
          */
         nextBirthday = LocalDate.of(birthdayYear, dateOfBirth.getMonthValue(), dateOfBirth.getDayOfMonth());
         
-        return ChronoUnit.DAYS.between(today, nextBirthday);
+        return ChronoUnit.DAYS.between(LocalDate.now(), nextBirthday);
     }
     
     private boolean birthDayAlreadyHappenedThisYear(final LocalDate dateOfBirth) {
