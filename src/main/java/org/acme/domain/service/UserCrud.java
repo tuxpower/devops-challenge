@@ -91,7 +91,7 @@ public class UserCrud {
          * Check if birthday is still this year, else next year.
          * 
          */
-        birthdayYear = (birthDayAlreadyHappenedThisYear(dateOfBirth)) ? today.getYear(): today.plusYears(1).getYear();
+        birthdayYear = (birthDayAlreadyHappenedThisYear(dateOfBirth)) ? today.plusYears(1).getYear() : today.getYear();
         
         /**
          * Set the next birthday
@@ -102,9 +102,8 @@ public class UserCrud {
     }
     
     private boolean birthDayAlreadyHappenedThisYear(final LocalDate dateOfBirth) {
-        return todayMonth < dateOfBirth.getMonthValue()
-                || (todayMonth == dateOfBirth.getMonthValue() 
-                && todayDayOfMounth < dateOfBirth.getDayOfMonth());
+        return LocalDate.now().isAfter(
+                LocalDate.now().withMonth(dateOfBirth.getMonthValue()).withDayOfMonth(dateOfBirth.getDayOfMonth()));
     }
 
 }
