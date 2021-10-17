@@ -59,7 +59,7 @@ public class UserCrudTest {
             doReturn(user).when(assembler).assembleUser(userEntity);
             
             // action
-            String result = userCrud.read(username);
+            userCrud.read(username).toString();
             
             // verification
             verify(assembler, only()).assembleUser(userEntity);
