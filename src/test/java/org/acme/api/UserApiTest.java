@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 
 import org.acme.domain.entity.User;
 import org.acme.domain.service.UserCrud;
+import org.json.JSONObject;
 
 import static org.mockito.Mockito.doReturn;
 import static org.junit.Assert.assertFalse;
@@ -43,7 +44,7 @@ public class UserApiTest {
         @Test
         void shouldReturnSuccess() {
             // data
-            String expected = new String();
+            JSONObject expected = new JSONObject();
             
             // expectation
             doReturn(expected).when(userCrud).read("johndoe");
@@ -52,7 +53,7 @@ public class UserApiTest {
             Response result = api.getUser("johndoe");
             
             // verification
-            assertEquals(expected, result.getEntity());
+            assertEquals(expected.toString(), result.getEntity());
         }
         
         @Test
