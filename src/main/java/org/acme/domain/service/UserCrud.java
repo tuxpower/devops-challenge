@@ -12,6 +12,7 @@ import javax.ws.rs.NotFoundException;
 import org.acme.api.database.entity.UserEntity;
 import org.acme.domain.assembler.DomainAssembler;
 import org.acme.domain.entity.User;
+import org.json.JSONObject;
 import org.acme.api.database.repository.UserRepository;
 
 /**
@@ -25,6 +26,9 @@ public class UserCrud {
     
     @Inject
     UserRepository repository;
+    
+    private int todayMonth = LocalDate.now().getMonthValue();
+    private int todayDayOfMounth = LocalDate.now().getDayOfMonth();
     
     /**
      * Create user related information.
@@ -53,7 +57,7 @@ public class UserCrud {
      * 
      * @return String the information about the user birthday
      */
-   public String read(
+   public JSONObject read(
             @NotNull
             final String username) {
         User user = repository.stream("username", username)
@@ -64,25 +68,19 @@ public class UserCrud {
         return checkBirthday(user);
     }
     
-    private String checkBirthday(final User user) {
-        StringBuilder message = new StringBuilder();
-        LocalDate dateOfBirth = user.getDateOfBirth();
-        LocalDate today = LocalDate.now();
+    private JSONObject checkBirthday(final User user) {
+        LocalDate dateOfBirth = user.getDateOfBirth();  
         
-        int todayMonth = today.getMonthValue();
-        int todayDayOfMounth = today.getDayOfMonth();
+        String hello = "Hello, " + user.getUsername() + "!";
         
-        /**
-         * Check first if today is user birthday else calculate N days
-         */
-        if (dateOfBirth.getMonthValue() == todayMonth && dateOfBirth.getDayOfMonth() == todayDayOfMounth) {
-            message.append("{\"message\": \"Hello, " + user.getUsername() + "! Happy Birthday!\"}");
-        } else {
-            message.append("{\"message\": \"Hello, " + user.getUsername() + "! Your birthday is in "  
-                    + nDays(dateOfBirth, today) + " day(s)\"}");
-        }
+        return new JSONObject()
+                .put("message", isBirtyhdayToday(user.getDateOfBirth()) ? hello + " Happy Birthday!" 
+                        : hello + " Your birthday is in " + nDays(dateOfBirth, LocalDate.now()) + " day(s)");
+    }
+    
+    private boolean isBirtyhdayToday(final LocalDate dateOfBirth) {
         
-        return message.toString();
+        return dateOfBirth.getMonthValue() == todayMonth && dateOfBirth.getDayOfMonth() == todayDayOfMounth;
     }
     
     private long nDays(final LocalDate dateOfBirth, final LocalDate today) {
@@ -104,10 +102,9 @@ public class UserCrud {
     }
     
     private boolean birthDayAlreadyHappenedThisYear(final LocalDate dateOfBirth) {
-        LocalDate today = LocalDate.now();
-        return today.getMonthValue() < dateOfBirth.getMonthValue()
-                || (today.getMonthValue() == dateOfBirth.getMonthValue() 
-                && today.getDayOfMonth() < dateOfBirth.getDayOfMonth());
+        return todayMonth < dateOfBirth.getMonthValue()
+                || (todayMonth == dateOfBirth.getMonthValue() 
+                && todayDayOfMounth < dateOfBirth.getDayOfMonth());
     }
 
 }
