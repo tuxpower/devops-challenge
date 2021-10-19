@@ -1,32 +1,19 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+var restify = require('restify');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const server = restify.createServer({
+  name: 'devops-test',
+  version: '1.0.0'
+});
 
-var app = express();
 var db = require('./queries');
 
-app.use(bodyParser.json())
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-)
+server.use(restify.plugins.acceptParser(server.acceptable));
+server.use(restify.plugins.queryParser());
+server.use(restify.plugins.bodyParser());
 
-app.get('/hello/:username', db.getUserByUsername)
-app.put('/hello/:username', db.createUser)
+server.get('/hello/:username', db.getDateOfBirthByUsername)
+server.put('/hello/:username', db.createUser)
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-module.exports = app;
+server.listen(8080, function () {
+  console.log('%s listening at %s', server.name, server.url);
+});

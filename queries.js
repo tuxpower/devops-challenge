@@ -7,30 +7,33 @@ const pool = new Pool({
   port: 5432,
 })
 
-const getUserByUsername = async (request, response) => {
-  const username = request.params.username
+const getDateOfBirthByUsername = async (req, res, next) => {
+  const username = req.params.username
 
   pool.query('SELECT date_of_birth FROM users WHERE username = $1', [username], (error, results) => {
     if (error) {
       throw error
     }
-    response.status(200).json(results.rows)
+    res.send(200, results.rows[0].date_of_birth);
+    return next();
   })
 }
 
-const createUser = (request, response) => {
-  const username = request.params.username
-  const { dateOfBirth } = request.body
+// curl -X PUT 'http://localhost:8080/hello/jose' -d '{"dateOfBirth":"1975-08-10"}' -H 'Content-Type: application/json'
+const createUser = (req, res, next) => {
+  const username = req.params.username
+  const dateOfBirth  = req.body.dateOfBirth
 
   pool.query('INSERT INTO users (username, date_of_birth) VALUES ($1, $2)', [username, dateOfBirth], (error, results) => {
     if (error) {
       throw error
     }
-    response.status(204).json()
+    res.send(204);
+    return next();
   })
 }
 
 module.exports = {
-  getUserByUsername,
+  getDateOfBirthByUsername,
   createUser,
 }
