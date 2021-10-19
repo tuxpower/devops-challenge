@@ -14,7 +14,7 @@ const getUserByUsername = async (request, response) => {
     if (error) {
       throw error
     }
-    response.status(200).json(results.rows)
+    response.status(200).json(results.rows[0].date_of_birth)
   })
 }
 
