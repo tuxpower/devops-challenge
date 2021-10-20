@@ -1,5 +1,7 @@
 # Devops-Challenge Project
 
+[![CircleCI](https://circleci.com/gh/tuxpower/devops-challenge/tree/develop.svg?style=svg)](https://circleci.com/gh/tuxpower/devops-challenge/tree/develop)
+
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
