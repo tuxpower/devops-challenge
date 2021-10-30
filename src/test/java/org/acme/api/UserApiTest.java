@@ -91,10 +91,10 @@ public class UserApiTest {
                     .build();
             
             // expectation
-            //doReturn(expected).when(userCrud).persist("johndoe", user);
+            doReturn(expected).when(userCrud).persist(user);
             
             // action
-            Response result = api.postUser("jonhdoe", user);
+            Response result = api.postUser(user);
             
             // verification
             assertEquals(201, result.getStatus());
@@ -103,32 +103,32 @@ public class UserApiTest {
         
         @Test
         void shouldHaveValidUsername() throws NoSuchMethodException, SecurityException {
-            assertFalse(validator.validateParameters(api, UserApi.class.getDeclaredMethod("postUser", String.class, User.class), new Object[]
-                    {"johndoe1", new User("", LocalDate.of(1978, 9, 2))}).isEmpty());
+            assertFalse(validator.validateParameters(api, UserApi.class.getDeclaredMethod("postUser", User.class), new Object[]
+                    {new User("johndoe1", LocalDate.of(1978, 9, 2))}).isEmpty());
         }
         
         @Test
         void shouldHaveBirthdayBeforeToday() throws NoSuchMethodException, SecurityException {
-            assertFalse(validator.validateParameters(api, UserApi.class.getDeclaredMethod("postUser", String.class, User.class), new Object[]
-                    {"johndoe", new User("", LocalDate.now().plusDays(1))}).isEmpty());
+            assertFalse(validator.validateParameters(api, UserApi.class.getDeclaredMethod("postUser", User.class), new Object[]
+                    {new User("johndoe", LocalDate.now().plusDays(1))}).isEmpty());
         }
         
         @Test
         void shouldReturnResponseWithBadRequestIfUsernameNotProvided() {
             User user = User.builder().withDateOfBirth(LocalDate.of(1978, 9, 2)).build();
             
-            doThrow(ConstraintViolationException.class).when(userCrud).persist("johndoe", user);
+            doThrow(ConstraintViolationException.class).when(userCrud).persist(user);
             
-            assertThrows(ConstraintViolationException.class, () -> api.postUser("johndoe", user));
+            assertThrows(ConstraintViolationException.class, () -> api.postUser(user));
         }
         
         @Test
         void shouldReturnResponseWithBadRequestIfDateOfBirthNotProvided() {
             User user = User.builder().withUsername("johndoe").build();
             
-            doThrow(ConstraintViolationException.class).when(userCrud).persist("johndoe", user);
+            doThrow(ConstraintViolationException.class).when(userCrud).persist(user);
             
-            assertThrows(ConstraintViolationException.class, () -> api.postUser("johndoe", user));
+            assertThrows(ConstraintViolationException.class, () -> api.postUser(user));
         }
     }
 

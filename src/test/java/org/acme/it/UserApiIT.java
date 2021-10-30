@@ -13,8 +13,7 @@ import io.restassured.http.ContentType;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
@@ -32,23 +31,23 @@ public class UserApiIT {
         given()
             .when()
                 .contentType(ContentType.JSON)
-                .body("{\"dateOfBirth\": \"1978-09-02\"}")
-                .post("/hello/johndoe")
+                .body("{\"username\": \"johndoe\",\n \"dateOfBirth\": \"1978-09-02\"}")
+                .post("/users")
             .then()
-                .statusCode(204);
+                .statusCode(201);
     }
     
     @Test
     @DataSet(cleanBefore = true)
-    void shouldConvertConstraintViolationInBadRequestWhenPutUserInvalid() {
+    void shouldConvertConstraintViolationInBadRequestWhenUsernameInvalid() {
         given()
             .when()
                 .contentType(ContentType.JSON)
-                .body("{\"dateOfBirth\": \"1978-09-02\"}")
-                .post("/hello/johndoe1")
+                .body("{\"username\": \"johndoe1\",\n \"dateOfBirth\": \"1978-09-02\"}")
+                .post("/users")
             .then()
                 .statusCode(400)
-                .body("parameterViolations[0].message", is("Username must contain only letters"));
+                .body("parameterViolations[0].message", is("Username must contain only letters."));
     }
     
     @Test
@@ -57,11 +56,24 @@ public class UserApiIT {
         given()
             .when()
                 .contentType(ContentType.JSON)
-                .body("{\"dateOfBirth\": " + "\"" + LocalDate.now().plusYears(1) + "\"}")
-                .post("/hello/johndoe")
+                .body("{\"username\": \"johndoe\",\n \"dateOfBirth\": " + "\"" + LocalDate.now().plusYears(1) + "\"}")
+                .post("/users")
             .then()
                 .statusCode(400)
                 .body("parameterViolations[0].message", is("Date of birth not valid."));
+    }
+    
+    @Test
+    @DataSet(cleanBefore = true)
+    void shouldConvertConstraintViolationInBadRequestWhenUsernameIsNull() {
+        given()
+            .when()
+                .contentType(ContentType.JSON)
+                .body("{\"dateOfBirth\": \"1978-09-02\"}")
+                .post("/users")
+            .then()
+                .statusCode(400)
+                .body("parameterViolations[0].message", is("Username must contain only letters."));
     }
     
     @Test
@@ -70,25 +82,27 @@ public class UserApiIT {
         given()
             .when()
                 .contentType(ContentType.JSON)
-                .post("/hello/johndoe")
+                .body("{\"username\": \"johndoe\"}")
+                .post("/users")
             .then()
                 .statusCode(400)
-                .body("parameterViolations[0].message", is("must not be null"));
+                .body("parameterViolations[0].message", is("Date of birth not valid."));
     }
     
     @Test
     @DataSet(value = "dataset/user.yml", cleanBefore = true)
     void shouldReturnSuccessWhenGetUser() {
-        given()
+        String body = given()
             .when()
                 .contentType(ContentType.JSON)
-                .get("/hello/johndoe")
+                .get("/users/johndoe")
             .then()
                 .statusCode(200)
-                .body(
-                        startsWith("{\"message\": \"Hello, johndoe!"),
-                        containsString("birthday"));
-            
+                .extract()
+                .body()
+                .asString();
+        
+        assertEquals("{\"username\":\"johndoe\",\"dateOfBirth\":\"1978-09-02\"}", body);
     }
     
     @Test
@@ -97,7 +111,19 @@ public class UserApiIT {
         given()
             .when()
                 .contentType(ContentType.JSON)
-                .get("/hello/johndoe1")
+                .get("/users/johndoe1")
+            .then()
+                .statusCode(400)
+                .body("parameterViolations[0].message", is("Username must contain only letters"));
+    }
+    
+    @Test
+    @DataSet(cleanBefore = true)
+    void shouldConvertConstraintViolationInBadRequestWhenGetCheckBirthday() {
+        given()
+            .when()
+                .contentType(ContentType.JSON)
+                .get("/users/johndoe1/birthday")
             .then()
                 .statusCode(400)
                 .body("parameterViolations[0].message", is("Username must contain only letters"));
@@ -109,7 +135,7 @@ public class UserApiIT {
         given()
             .when()
                 .contentType(ContentType.JSON)
-                .get("/hello/inexistentuser")
+                .get("/users/inexistentuser")
             .then()
                 .statusCode(404);
     }
