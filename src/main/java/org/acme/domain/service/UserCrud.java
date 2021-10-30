@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 
@@ -40,8 +41,8 @@ public class UserCrud {
      */
     @Transactional
     public User persist(
-
             @NotNull
+            @Valid
             final User user) {
         
         UserEntity userToPersist = assembler.assembleUser(user);
