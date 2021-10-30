@@ -12,14 +12,13 @@ public class DomainAssembler {
     /**
      * Assembles domain entity user to a database entity.
      * 
-     * @param username the username of the user
      * @param origin the domain entity user
      * 
      * @return {@link UserEntity}
      */
-    public UserEntity assembleUser(@NotNull final String username, @NotNull final User origin) {
+    public UserEntity assembleUser(@NotNull final User origin) {
         UserEntity destiny = new UserEntity();
-        destiny.setUsername(username);
+        destiny.setUsername(origin.getUsername());
         destiny.setDateOfBirth(origin.getDateOfBirth());
         return destiny;
     }

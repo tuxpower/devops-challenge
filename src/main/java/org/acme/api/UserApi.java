@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -30,30 +30,23 @@ public class UserApi {
     /**
      * Create user related information.
      * 
-     * @param username          The username of the user
      * @param user              The user birthday
      * 
      * @return {@link Response}
      */
-    @PUT
-    @Path("{username}")
+    @POST
+    @Path("users")
     @Operation(summary = "Saves/updates the given user’s name and date of birth in the database")
     @APIResponse(responseCode = "204", ref = "noContent")
-    public Response putUser(
-        @NotNull
-        @Parameter(ref="username")
-        @PathParam("username")
-        @Pattern(regexp = "^[A-Za-z]*$", message="Username must contain only letters")
-        final String username,
-    
+    public Response postUser(
         @NotNull
         @DateOfBirth
         @RequestBody(ref="userRequestBody")
         final User user) {
         
-        userCrud.persist(username, user);
+        User created = userCrud.persist(user);
     
-    return Response.noContent().build();
+        return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
     /**
@@ -64,7 +57,7 @@ public class UserApi {
      * @return {@link Response}
      */
     @GET
-    @Path("{username}")
+    @Path("users/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Returns hello birthday message for the given user")
     @APIResponse(responseCode = "200", ref = "userResponse")
@@ -76,6 +69,6 @@ public class UserApi {
         @Pattern(regexp = "^[A-Za-z]*$", message="Username must contain only letters")
         final String username) {
     
-    return Response.ok(userCrud.read(username).toString()).build();
+    return Response.status(Response.Status.OK).entity(userCrud.read(username).toString()).build();
     }
 }

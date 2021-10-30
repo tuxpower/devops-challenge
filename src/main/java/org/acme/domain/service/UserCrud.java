@@ -33,21 +33,20 @@ public class UserCrud {
     /**
      * Create user related information.
      * 
-     * @param username the username of the user
      * 
      * @param user the user date of birth
+     * 
+     * @return User {@link User}
      */
     @Transactional
-    public void persist(
-            @NotNull
-            final String username,
-            
+    public User persist(
             @NotNull
             final User user) {
         
-        UserEntity userToPersist = assembler.assembleUser(username, user);
+        UserEntity userToPersist = assembler.assembleUser(user);
         
-        repository.persist(userToPersist); 
+        repository.persist(userToPersist);
+        return assembler.assembleUser(userToPersist); 
     }
     
     /**
