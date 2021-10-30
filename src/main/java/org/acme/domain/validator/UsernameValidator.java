@@ -1,23 +1,24 @@
 package org.acme.domain.validator;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.acme.domain.entity.User;
 
-public class DateOfBirthValidator implements ConstraintValidator<DateOfBirth, User> {
+public class UsernameValidator implements ConstraintValidator<Username, User> {
 
     @Override
     public boolean isValid(final User user, final ConstraintValidatorContext context) {
         boolean valid = false;
-        if (user.getDateOfBirth() == null) {
+        if (user.getUsername() == null) {
             valid = false;
         } else {
-            LocalDate today = LocalDate.now();
-            valid = ChronoUnit.DAYS.between(user.getDateOfBirth(), today) > 0;
+            Pattern pattern = Pattern.compile("^[A-Za-z]*$", Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(user.getUsername());
+            valid = matcher.find();
         }
         return valid;
     }

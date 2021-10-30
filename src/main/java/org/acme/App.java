@@ -4,8 +4,6 @@ import org.acme.domain.entity.User;
 import org.eclipse.microprofile.openapi.annotations.Components;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.enums.ParameterIn;
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
@@ -13,7 +11,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.servers.Server;
 
 import javax.ws.rs.ApplicationPath;
@@ -24,7 +21,7 @@ import javax.ws.rs.core.MediaType;
  * This class makes sure that the application is loaded by Quarkus.
  *
  */
-@ApplicationPath("/hello")
+@ApplicationPath("/")
 @OpenAPIDefinition(
         info = @Info(version = "V0.1", title = "DevOps Engineer Test"),
         servers = {
@@ -34,11 +31,6 @@ import javax.ws.rs.core.MediaType;
                 )
         },
         components=@Components(
-                securitySchemes = {
-                        @SecurityScheme(description = "API key for authorization", apiKeyName = "accessToken", 
-                                securitySchemeName = "ApiKeyAuth", type = SecuritySchemeType.APIKEY, 
-                                in = SecuritySchemeIn.HEADER)
-                },
                 parameters= {
                         @Parameter(
                                 name = "username",
@@ -53,16 +45,34 @@ import javax.ws.rs.core.MediaType;
                                 name = "userRequestBody",
                                 summary = "User request body",
                                 description = "User request body example",
-                                value =     "{\n" 
+                                value =     "{\n"
+                                        +   "    \"username\": \"johndoe\",\n"
                                         +   "    \"" + User.DATE_OF_BIRTH + "\": \"1978-09-02\"\n"
                                         +   "}"
                         ),
                         @ExampleObject(
                                 name = "userResponseBody",
-                                summary = "User response body",
+                                summary = "User request body",
+                                description = "User request body example",
+                                value =     "{\n" 
+                                        +   "    \"username\": \"johndoe\",\n"
+                                        +   "    \"" + User.DATE_OF_BIRTH + "\": \"1978-09-02\"\n"
+                                        +   "}"
+                        ),
+                        @ExampleObject(
+                                name = "userBirthdayResponseBody",
+                                summary = "Happy Birthday body",
                                 description = "User response body example",
                                 value =     "{\n" 
                                         +   "    \"message\": \"Hello, johndoe! Happy Birthday!\"\n"
+                                        +   "}"
+                        ),
+                        @ExampleObject(
+                                name = "userBirthdayNDaysResponseBody",
+                                summary = "Birthday N days body",
+                                description = "User response body example",
+                                value =     "{\n" 
+                                        +   "    \"message\": \"Hello, johndoe! Your birthday is in 61 day(s)\"\n"
                                         +   "}"
                         )
                 },
@@ -70,7 +80,7 @@ import javax.ws.rs.core.MediaType;
                         @RequestBody(
                                 name = "userRequestBody",
                                 required = true,
-                                description = "User request body for create.",
+                                description = "User request body for create",
                                 content = @Content(
                                         mediaType = MediaType.APPLICATION_JSON,
                                         schema = @Schema(ref = "User"),
@@ -81,11 +91,7 @@ import javax.ws.rs.core.MediaType;
                 responses = {
                         @APIResponse(
                                 name="userNotFound",
-                                description = "Provided user does not exist."
-                        ),
-                        @APIResponse(
-                                name="noContent",
-                                description = "No Content."
+                                description = "Provided user does not exist"
                         ),
                         @APIResponse(
                                 name="userResponse",
@@ -93,6 +99,16 @@ import javax.ws.rs.core.MediaType;
                                 content = @Content(mediaType = MediaType.APPLICATION_JSON,
                                         schema = @Schema(ref = "User"),
                                         examples = @ExampleObject(ref = "userResponseBody")
+                                )
+                        ),
+                        @APIResponse(
+                                name="userBirthdayResponse",
+                                description = "User birthday response body",
+                                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+                                        schema = @Schema(ref = "User"),
+                                        examples = { @ExampleObject(ref = "userBirthdayResponseBody"),
+                                                     @ExampleObject(ref = "userBirthdayNDaysResponseBody")
+                                        }
                                 )
                         )
                 }

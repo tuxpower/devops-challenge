@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -19,6 +20,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class User {
     
     /**
+     * Username property name.
+     */
+    public static final String USERNAME = "username";
+    
+    /**
      * User date of birth property name.
      */
     public static final String DATE_OF_BIRTH = "dateOfBirth";
@@ -27,6 +33,9 @@ public class User {
      * Username.
      */
     @NotNull
+    @JsonProperty(User.USERNAME)
+    @Schema(name = User.USERNAME, description = "Username of the user", required = true)
+    @Pattern(regexp = "^[A-Za-z]*$", message="Username must contain only letters")
     private String username;
     
     /**
@@ -40,20 +49,13 @@ public class User {
     /**
      * User constructor.
      * 
-     * @param dateOfBirth date of birth of the User
-     */
-    @JsonCreator
-    public User(@JsonProperty(User.DATE_OF_BIRTH) final LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-    
-    /**
-     * User constructor.
-     * 
      * @param username      username of the User
      * @param dateOfBirth   date of birth of the User
      */
-    public User(final String username, final LocalDate dateOfBirth) {
+    @JsonCreator
+    public User(
+            @JsonProperty(User.USERNAME) final String username, 
+            @JsonProperty(User.DATE_OF_BIRTH) final LocalDate dateOfBirth) {
         this.username = username;
         this.dateOfBirth = dateOfBirth;
     }  

@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import org.acme.domain.entity.User;
 import org.acme.domain.service.UserCrud;
 import org.acme.domain.validator.DateOfBirth;
+import org.acme.domain.validator.Username;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
@@ -30,30 +31,24 @@ public class UserApi {
     /**
      * Create user related information.
      * 
-     * @param username          The username of the user
      * @param user              The user birthday
      * 
      * @return {@link Response}
      */
-    @PUT
-    @Path("{username}")
+    @POST
+    @Path("users")
     @Operation(summary = "Saves/updates the given user’s name and date of birth in the database")
-    @APIResponse(responseCode = "204", ref = "noContent")
-    public Response putUser(
+    @APIResponse(responseCode = "201", ref = "userResponse")
+    public Response postUser(
         @NotNull
-        @Parameter(ref="username")
-        @PathParam("username")
-        @Pattern(regexp = "^[A-Za-z]*$", message="Username must contain only letters")
-        final String username,
-    
-        @NotNull
+        @Username
         @DateOfBirth
         @RequestBody(ref="userRequestBody")
         final User user) {
         
-        userCrud.persist(username, user);
+        User created = userCrud.persist(user);
     
-    return Response.noContent().build();
+        return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
     /**
@@ -64,9 +59,9 @@ public class UserApi {
      * @return {@link Response}
      */
     @GET
-    @Path("{username}")
+    @Path("users/{username}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Returns hello birthday message for the given user")
+    @Operation(summary = "Returns user")
     @APIResponse(responseCode = "200", ref = "userResponse")
     @APIResponse(responseCode = "404", ref = "userNotFound")
     public Response getUser(
@@ -76,6 +71,27 @@ public class UserApi {
         @Pattern(regexp = "^[A-Za-z]*$", message="Username must contain only letters")
         final String username) {
     
-    return Response.ok(userCrud.read(username).toString()).build();
+    return Response.status(Response.Status.OK).entity(userCrud.read(username)).build();
+    }
+    
+    /**
+     * Get user birthday related information.
+     * 
+     * @param username The username of the user
+     * @return birthday Information about user birthday
+     */
+    @GET
+    @Path("users/{username}/birthday")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Returns hello birthday message for the given user")
+    @APIResponse(responseCode = "200", ref = "userBirthdayResponse")
+    @APIResponse(responseCode = "404", ref = "userNotFound")
+    public Response checkBirthday(
+            @NotNull
+            @Parameter(ref="username")
+            @PathParam("username")
+            @Pattern(regexp = "^[A-Za-z]*$", message="Username must contain only letters")
+            final String username) {
+        return Response.status(Response.Status.OK).entity(userCrud.checkBirthday(username).toString()).build();
     }
 }

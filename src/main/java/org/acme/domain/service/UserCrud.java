@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 
@@ -33,31 +34,46 @@ public class UserCrud {
     /**
      * Create user related information.
      * 
-     * @param username the username of the user
      * 
      * @param user the user date of birth
+     * 
+     * @return User {@link User}
      */
     @Transactional
-    public void persist(
+    public User persist(
             @NotNull
-            final String username,
-            
-            @NotNull
+            @Valid
             final User user) {
         
-        UserEntity userToPersist = assembler.assembleUser(username, user);
+        UserEntity userToPersist = assembler.assembleUser(user);
         
-        repository.persist(userToPersist); 
+        repository.persist(userToPersist);
+        return assembler.assembleUser(userToPersist); 
     }
     
     /**
      * Retrieves user related information.
      * 
      * @param username the username of the user
+     * @return {@link User}
+     */
+    public User read(
+            @NotNull
+            final String username) {
+        return repository.stream("username", username)
+                .findFirst()
+                .map(assembler::assembleUser)
+                .orElseThrow(NotFoundException::new);
+    }
+    
+    /**
+     * Retrieves user birthday related information.
+     * 
+     * @param username the username of the user
      * 
      * @return String the information about the user birthday
      */
-   public JSONObject read(
+   public JSONObject checkBirthday(
             @NotNull
             final String username) {
         User user = repository.stream("username", username)

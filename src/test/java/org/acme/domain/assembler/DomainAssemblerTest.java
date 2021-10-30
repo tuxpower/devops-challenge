@@ -36,7 +36,7 @@ public class DomainAssemblerTest {
             expected.setDateOfBirth(DATE_OF_BIRTH);
 
             // action and verify
-            assertEquals(expected, assembler.assembleUser(USERNAME, new User(USERNAME, DATE_OF_BIRTH)));
+            assertEquals(expected, assembler.assembleUser(new User(USERNAME, DATE_OF_BIRTH)));
         }
         
         @Test

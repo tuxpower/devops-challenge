@@ -17,10 +17,9 @@ import javax.ws.rs.core.Response;
 
 import org.acme.domain.entity.User;
 import org.acme.domain.service.UserCrud;
-import org.json.JSONObject;
 
 import static org.mockito.Mockito.doReturn;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
@@ -44,7 +43,10 @@ public class UserApiTest {
         @Test
         void shouldReturnSuccess() {
             // data
-            JSONObject expected = new JSONObject();
+            User expected = User.builder()
+                    .withUsername("johndoe")
+                    .withDateOfBirth(LocalDate.of(1978, 9, 2))
+                    .build();
             
             // expectation
             doReturn(expected).when(userCrud).read("johndoe");
@@ -53,13 +55,13 @@ public class UserApiTest {
             Response result = api.getUser("johndoe");
             
             // verification
-            assertEquals(expected.toString(), result.getEntity());
+            assertEquals(expected, result.getEntity());
         }
         
         @Test
         void shouldHaveValidUsername() throws NoSuchMethodException, SecurityException {
-            assertFalse(validator.validateParameters(api, UserApi.class.getDeclaredMethod("putUser", String.class, User.class), new Object[]
-                    {"johndoe1", new User("", LocalDate.of(1978, 9, 2))}).isEmpty());
+            assertFalse(validator.validateParameters(api, UserApi.class.getDeclaredMethod("getUser", String.class), new Object[]
+                    {"johndoe1"}).isEmpty());
         }
         
         @Test
@@ -78,49 +80,55 @@ public class UserApiTest {
     }
     
     @Nested
-    class PutUser {
+    class PostUser {
         @Test
-        void shouldReturnNoContent() {
+        void shouldReturnSuccess() {
             // data
-            User user = new User(LocalDate.of(1978, 9, 2));
-            String expected = null;
+            User user = new User("johndoe", LocalDate.of(1978, 9, 2));
+            User expected = User.builder()
+                    .withUsername("johndoe")
+                    .withDateOfBirth(LocalDate.of(1978, 9, 2))
+                    .build();
+            
+            // expectation
+            doReturn(expected).when(userCrud).persist(user);
             
             // action
-            Response result = api.putUser("jonhdoe", user);
+            Response result = api.postUser(user);
             
             // verification
-            assertEquals(204, result.getStatus());
+            assertEquals(201, result.getStatus());
             assertEquals(expected, result.getEntity());
         }
         
         @Test
         void shouldHaveValidUsername() throws NoSuchMethodException, SecurityException {
-            assertFalse(validator.validateParameters(api, UserApi.class.getDeclaredMethod("putUser", String.class, User.class), new Object[]
-                    {"johndoe1", new User("", LocalDate.of(1978, 9, 2))}).isEmpty());
+            assertFalse(validator.validateParameters(api, UserApi.class.getDeclaredMethod("postUser", User.class), new Object[]
+                    {new User("johndoe1", LocalDate.of(1978, 9, 2))}).isEmpty());
         }
         
         @Test
         void shouldHaveBirthdayBeforeToday() throws NoSuchMethodException, SecurityException {
-            assertFalse(validator.validateParameters(api, UserApi.class.getDeclaredMethod("putUser", String.class, User.class), new Object[]
-                    {"johndoe", new User("", LocalDate.now().plusDays(1))}).isEmpty());
+            assertFalse(validator.validateParameters(api, UserApi.class.getDeclaredMethod("postUser", User.class), new Object[]
+                    {new User("johndoe", LocalDate.now().plusDays(1))}).isEmpty());
         }
         
         @Test
         void shouldReturnResponseWithBadRequestIfUsernameNotProvided() {
             User user = User.builder().withDateOfBirth(LocalDate.of(1978, 9, 2)).build();
             
-            doThrow(ConstraintViolationException.class).when(userCrud).persist("johndoe", user);
+            doThrow(ConstraintViolationException.class).when(userCrud).persist(user);
             
-            assertThrows(ConstraintViolationException.class, () -> api.putUser("johndoe", user));
+            assertThrows(ConstraintViolationException.class, () -> api.postUser(user));
         }
         
         @Test
         void shouldReturnResponseWithBadRequestIfDateOfBirthNotProvided() {
             User user = User.builder().withUsername("johndoe").build();
             
-            doThrow(ConstraintViolationException.class).when(userCrud).persist("johndoe", user);
+            doThrow(ConstraintViolationException.class).when(userCrud).persist(user);
             
-            assertThrows(ConstraintViolationException.class, () -> api.putUser("johndoe", user));
+            assertThrows(ConstraintViolationException.class, () -> api.postUser(user));
         }
     }
 
