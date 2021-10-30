@@ -54,7 +54,7 @@ public class User {
      */
     @JsonCreator
     public User(
-            final String username, 
+            @JsonProperty(User.USERNAME) final String username, 
             @JsonProperty(User.DATE_OF_BIRTH) final LocalDate dateOfBirth) {
         this.username = username;
         this.dateOfBirth = dateOfBirth;
