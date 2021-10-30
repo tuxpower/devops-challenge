@@ -13,8 +13,8 @@ public class DateOfBirthValidator implements ConstraintValidator<DateOfBirth, Us
     @Override
     public boolean isValid(final User user, final ConstraintValidatorContext context) {
         boolean valid = false;
-        if (user == null) {
-            valid = true;
+        if (user.getDateOfBirth() == null) {
+            valid = false;
         } else {
             LocalDate today = LocalDate.now();
             valid = ChronoUnit.DAYS.between(user.getDateOfBirth(), today) > 0;
