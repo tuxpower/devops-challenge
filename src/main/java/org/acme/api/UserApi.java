@@ -59,7 +59,7 @@ public class UserApi {
     @GET
     @Path("users/{username}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Returns hello birthday message for the given user")
+    @Operation(summary = "Returns user")
     @APIResponse(responseCode = "200", ref = "userResponse")
     @APIResponse(responseCode = "404", ref = "userNotFound")
     public Response getUser(
@@ -70,5 +70,26 @@ public class UserApi {
         final String username) {
     
     return Response.status(Response.Status.OK).entity(userCrud.read(username).toString()).build();
+    }
+    
+    /**
+     * Get user birthday related information.
+     * 
+     * @param username The username of the user
+     * @return birthday Information about user birthday
+     */
+    @GET
+    @Path("{username}/birthday")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Returns hello birthday message for the given user")
+    @APIResponse(responseCode = "200", ref = "userBirthdayResponse")
+    @APIResponse(responseCode = "404", ref = "userNotFound")
+    public Response checkBirthday(
+            @NotNull
+            @Parameter(ref="username")
+            @PathParam("username")
+            @Pattern(regexp = "^[A-Za-z]*$", message="Username must contain only letters")
+            final String username) {
+        return Response.status(Response.Status.OK).entity(userCrud.checkBirthday(username).toString()).build();
     }
 }

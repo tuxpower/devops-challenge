@@ -53,16 +53,33 @@ import javax.ws.rs.core.MediaType;
                                 name = "userRequestBody",
                                 summary = "User request body",
                                 description = "User request body example",
-                                value =     "{\n" 
+                                value =     "{\n"
                                         +   "    \"" + User.DATE_OF_BIRTH + "\": \"1978-09-02\"\n"
                                         +   "}"
                         ),
                         @ExampleObject(
                                 name = "userResponseBody",
-                                summary = "User response body",
+                                summary = "User request body",
+                                description = "User request body example",
+                                value =     "{\n" 
+                                        +   "    \"username\": \"johndoe\",\n"
+                                        +   "    \"" + User.DATE_OF_BIRTH + "\": \"1978-09-02\"\n"
+                                        +   "}"
+                        ),
+                        @ExampleObject(
+                                name = "userBirthdayResponseBody",
+                                summary = "Happy Birthday body",
                                 description = "User response body example",
                                 value =     "{\n" 
                                         +   "    \"message\": \"Hello, johndoe! Happy Birthday!\"\n"
+                                        +   "}"
+                        ),
+                        @ExampleObject(
+                                name = "userBirthdayNDaysResponseBody",
+                                summary = "Birthday N days body",
+                                description = "User response body example",
+                                value =     "{\n" 
+                                        +   "    \"message\": \"Hello, johndoe! Your birthday is in 61 day(s)\"\n"
                                         +   "}"
                         )
                 },
@@ -70,7 +87,7 @@ import javax.ws.rs.core.MediaType;
                         @RequestBody(
                                 name = "userRequestBody",
                                 required = true,
-                                description = "User request body for create.",
+                                description = "User request body for create",
                                 content = @Content(
                                         mediaType = MediaType.APPLICATION_JSON,
                                         schema = @Schema(ref = "User"),
@@ -81,11 +98,7 @@ import javax.ws.rs.core.MediaType;
                 responses = {
                         @APIResponse(
                                 name="userNotFound",
-                                description = "Provided user does not exist."
-                        ),
-                        @APIResponse(
-                                name="noContent",
-                                description = "No Content."
+                                description = "Provided user does not exist"
                         ),
                         @APIResponse(
                                 name="userResponse",
@@ -93,6 +106,16 @@ import javax.ws.rs.core.MediaType;
                                 content = @Content(mediaType = MediaType.APPLICATION_JSON,
                                         schema = @Schema(ref = "User"),
                                         examples = @ExampleObject(ref = "userResponseBody")
+                                )
+                        ),
+                        @APIResponse(
+                                name="userBirthdayResponse",
+                                description = "User birthday response body",
+                                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+                                        schema = @Schema(ref = "User"),
+                                        examples = { @ExampleObject(ref = "userBirthdayResponseBody"),
+                                                     @ExampleObject(ref = "userBirthdayNDaysResponseBody")
+                                        }
                                 )
                         )
                 }

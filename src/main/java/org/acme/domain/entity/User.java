@@ -49,20 +49,13 @@ public class User {
     /**
      * User constructor.
      * 
-     * @param dateOfBirth date of birth of the User
-     */
-    @JsonCreator
-    public User(@JsonProperty(User.DATE_OF_BIRTH) final LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-    
-    /**
-     * User constructor.
-     * 
      * @param username      username of the User
      * @param dateOfBirth   date of birth of the User
      */
-    public User(final String username, final LocalDate dateOfBirth) {
+    @JsonCreator
+    public User(
+            final String username, 
+            @JsonProperty(User.DATE_OF_BIRTH) final LocalDate dateOfBirth) {
         this.username = username;
         this.dateOfBirth = dateOfBirth;
     }  

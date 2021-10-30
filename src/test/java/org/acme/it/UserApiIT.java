@@ -28,12 +28,12 @@ public class UserApiIT {
     
     @Test
     @ExpectedDataSet(value = "expected/user.yml")
-    void shouldReturnSuccessWhenPutUser() {
+    void shouldReturnSuccessWhenPostUser() {
         given()
             .when()
                 .contentType(ContentType.JSON)
                 .body("{\"dateOfBirth\": \"1978-09-02\"}")
-                .put("/hello/johndoe")
+                .post("/hello/johndoe")
             .then()
                 .statusCode(204);
     }
@@ -45,7 +45,7 @@ public class UserApiIT {
             .when()
                 .contentType(ContentType.JSON)
                 .body("{\"dateOfBirth\": \"1978-09-02\"}")
-                .put("/hello/johndoe1")
+                .post("/hello/johndoe1")
             .then()
                 .statusCode(400)
                 .body("parameterViolations[0].message", is("Username must contain only letters"));
@@ -58,7 +58,7 @@ public class UserApiIT {
             .when()
                 .contentType(ContentType.JSON)
                 .body("{\"dateOfBirth\": " + "\"" + LocalDate.now().plusYears(1) + "\"}")
-                .put("/hello/johndoe")
+                .post("/hello/johndoe")
             .then()
                 .statusCode(400)
                 .body("parameterViolations[0].message", is("Date of birth not valid."));
@@ -70,7 +70,7 @@ public class UserApiIT {
         given()
             .when()
                 .contentType(ContentType.JSON)
-                .put("/hello/johndoe")
+                .post("/hello/johndoe")
             .then()
                 .statusCode(400)
                 .body("parameterViolations[0].message", is("must not be null"));

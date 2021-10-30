@@ -40,6 +40,7 @@ public class UserCrud {
      */
     @Transactional
     public User persist(
+
             @NotNull
             final User user) {
         
@@ -53,10 +54,25 @@ public class UserCrud {
      * Retrieves user related information.
      * 
      * @param username the username of the user
+     * @return {@link User}
+     */
+    public User read(
+            @NotNull
+            final String username) {
+        return repository.stream("username", username)
+                .findFirst()
+                .map(assembler::assembleUser)
+                .orElseThrow(NotFoundException::new);
+    }
+    
+    /**
+     * Retrieves user birthday related information.
+     * 
+     * @param username the username of the user
      * 
      * @return String the information about the user birthday
      */
-   public JSONObject read(
+   public JSONObject checkBirthday(
             @NotNull
             final String username) {
         User user = repository.stream("username", username)
