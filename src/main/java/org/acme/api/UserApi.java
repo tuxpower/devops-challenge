@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import org.acme.domain.entity.User;
 import org.acme.domain.service.UserCrud;
 import org.acme.domain.validator.DateOfBirth;
+import org.acme.domain.validator.Username;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
@@ -37,9 +38,10 @@ public class UserApi {
     @POST
     @Path("users")
     @Operation(summary = "Saves/updates the given user’s name and date of birth in the database")
-    @APIResponse(responseCode = "204", ref = "noContent")
+    @APIResponse(responseCode = "201", ref = "userResponse")
     public Response postUser(
         @NotNull
+        @Username
         @DateOfBirth
         @RequestBody(ref="userRequestBody")
         final User user) {
@@ -69,7 +71,7 @@ public class UserApi {
         @Pattern(regexp = "^[A-Za-z]*$", message="Username must contain only letters")
         final String username) {
     
-    return Response.status(Response.Status.OK).entity(userCrud.read(username).toString()).build();
+    return Response.status(Response.Status.OK).entity(userCrud.read(username)).build();
     }
     
     /**
@@ -79,7 +81,7 @@ public class UserApi {
      * @return birthday Information about user birthday
      */
     @GET
-    @Path("{username}/birthday")
+    @Path("users/{username}/birthday")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Returns hello birthday message for the given user")
     @APIResponse(responseCode = "200", ref = "userBirthdayResponse")
