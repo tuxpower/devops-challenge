@@ -4,8 +4,6 @@ import org.acme.domain.entity.User;
 import org.eclipse.microprofile.openapi.annotations.Components;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.enums.ParameterIn;
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
@@ -13,7 +11,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.servers.Server;
 
 import javax.ws.rs.ApplicationPath;
@@ -34,11 +31,6 @@ import javax.ws.rs.core.MediaType;
                 )
         },
         components=@Components(
-                securitySchemes = {
-                        @SecurityScheme(description = "API key for authorization", apiKeyName = "accessToken", 
-                                securitySchemeName = "ApiKeyAuth", type = SecuritySchemeType.APIKEY, 
-                                in = SecuritySchemeIn.HEADER)
-                },
                 parameters= {
                         @Parameter(
                                 name = "username",
@@ -54,6 +46,7 @@ import javax.ws.rs.core.MediaType;
                                 summary = "User request body",
                                 description = "User request body example",
                                 value =     "{\n"
+                                        +   "    \"username\": \"johndoe\",\n"
                                         +   "    \"" + User.DATE_OF_BIRTH + "\": \"1978-09-02\"\n"
                                         +   "}"
                         ),
